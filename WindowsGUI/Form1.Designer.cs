@@ -1,7 +1,14 @@
-﻿namespace WindowsGUI
+﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Windows.Forms;
+
+
+namespace WindowsGUI
 {
-    partial class Form1
+    public partial class Form1
     {
+
         /// <summary>
         ///  Required designer variable.
         /// </summary>
@@ -20,6 +27,8 @@
             base.Dispose(disposing);
         }
 
+
+
         #region Windows Form Designer generated code
 
         /// <summary>
@@ -28,10 +37,21 @@
         /// </summary>
         private void InitializeComponent()
         {
-            components = new System.ComponentModel.Container();
+            SuspendLayout();
+            // 
+            // Form1
+            // 
+            AutoScaleDimensions = new SizeF(10F, 25F);
             AutoScaleMode = AutoScaleMode.Font;
+            BackColor = SystemColors.Desktop;
             ClientSize = new Size(800, 450);
+            Name = "Form1";
             Text = "Form1";
+            Load += Form1_Load;
+            Click += Form1_Click;
+            Paint += DrawFrame;
+            Resize += ResizeWindow;
+            ResumeLayout(false);
         }
 
         #endregion
