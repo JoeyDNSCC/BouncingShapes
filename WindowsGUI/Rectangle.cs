@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing.Drawing2D;
 using System.Linq.Expressions;
 using System.Text;
 
@@ -12,37 +13,67 @@ namespace WindowsGUI
 
         public Rectangle(float x, float y, float h, float w) : base(x, y)
         {
-            height = h; width = w;
+            height = h;
+            width = w;
+
+            // we'll say density is universally set to 1 for all shapes
+            mass = width * height;
+
+            //testing
+            //mass = 1;
+
+            momentOfInertia = mass * (width * width + height * height) / 12f;
         }
 
         public override void Draw(Graphics g)
         {
-            SolidBrush brush = new SolidBrush(color);
-            g.FillRectangle(brush, xAnchor, yAnchor, width, height);
+            GraphicsState state = g.Save();
+
+            g.TranslateTransform(xAnchor, yAnchor);
+
+            g.RotateTransform(rotation);
+
+            using (SolidBrush brush = new SolidBrush(color))
+            {
+                g.FillRectangle(brush, -width / 2, -height / 2, width, height);
+            }
+
+            g.Restore(state);
         }
 
         public override void DetectEdge(int windowWidth, int windowHeight)
         {
-            if (xAnchor <= 0)
+            float halfWidth = width / 2.0f;
+            float halfHeight = height / 2.0f;
+
+            // rotation stuff
+            float cos = (float)Math.Abs(Math.Cos(rotation * Math.PI / 180f));
+            float sin = (float)Math.Abs(Math.Sin(rotation * Math.PI / 180f));
+
+            float boundX = halfWidth * cos + halfHeight * sin;
+            float boundY = halfWidth * sin + halfHeight * cos;
+
+            
+            if (xAnchor - boundX < 0) // left
             {
-                xAnchor = 1;
-                xVelocity *= -1;
-            } 
-            else if (xAnchor + width >= windowWidth)
+                xAnchor = boundX;
+                xVelocity = Math.Abs(xVelocity);
+            }
+            else if (xAnchor + boundX > windowWidth) // right
             {
-                xAnchor = windowWidth - width - 1;
-                xVelocity *= -1;
+                xAnchor = windowWidth - boundX;
+                xVelocity = -Math.Abs(xVelocity);
             }
 
-            if (yAnchor <= 0)
+            if (yAnchor - boundY < 0) // top
             {
-                yAnchor = 1;
-                yVelocity *= -1;
+                yAnchor = boundY;
+                yVelocity = Math.Abs(yVelocity);
             }
-            else if (yAnchor + height >= windowHeight)
+            else if (yAnchor + boundY > windowHeight) // bottom
             {
-                yAnchor = windowHeight - height - 1;
-                yVelocity *= -1;
+                yAnchor = windowHeight - boundY;
+                yVelocity = -Math.Abs(yVelocity);
             }
         }
 
@@ -58,6 +89,7 @@ namespace WindowsGUI
 
         public override bool CollidesWithRectangle(Rectangle other)
         {
+            /*
             bool alignedOnX = (other.xAnchor + other.width >= xAnchor &&
                 other.xAnchor <= xAnchor + width);
 
@@ -112,18 +144,43 @@ namespace WindowsGUI
 
                 return true;
             }
-
+            */
             return false;
-        }
-
-        public override bool CollidesWithTriangle(Shape other)
-        {
-            throw new NotImplementedException();
         }
 
         public override PointF[] GetVertices()
         {
-            throw new NotImplementedException();
+            float halfWidth = width / 2f;
+            float halfHeight = height / 2f;
+
+            // Convert rotation to radians
+            float radians = rotation * (float)Math.PI / 180f;
+
+            float cos = (float)Math.Cos(radians);
+            float sin = (float)Math.Sin(radians);
+
+            // Vertices relative to the center
+            PointF[] vertices =
+            {
+                new PointF(-halfWidth, -halfHeight),
+                new PointF(halfWidth, -halfHeight),
+                new PointF(halfWidth, halfHeight),
+                new PointF(-halfWidth, halfHeight)
+            };
+
+            // Rotate and translate each vertex
+            for (int i = 0; i < vertices.Length; i++)
+            {
+                float x = vertices[i].X;
+                float y = vertices[i].Y;
+
+                vertices[i] = new PointF(
+                    xAnchor + x * cos - y * sin,
+                    yAnchor + x * sin + y * cos
+                );
+            }
+
+            return vertices;
         }
 
     }

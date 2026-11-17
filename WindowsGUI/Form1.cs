@@ -1,6 +1,8 @@
+using NAudio.Wave;
+using System.Drawing;
 using System.Windows.Forms;
 using WindowsGUI;
-using System.Drawing;
+using static WindowsGUI.CollisionDetector;
 
 namespace WindowsGUI
 {
@@ -23,16 +25,37 @@ namespace WindowsGUI
 
         private void MyTimer_Tick(object? sender, EventArgs e)
         {
+            // Move all shapes
             foreach (Shape shape in shapes)
             {
                 shape.Move();
-                shape.DetectEdge(ClientSize.Width, ClientSize.Height);
-                for (int i = 0; i < shapes.Count; i++)
+
+                shape.DetectEdge(
+                    ClientSize.Width,
+                    ClientSize.Height
+                );
+            }
+
+            // Check collisions
+            for (int i = 0; i < shapes.Count; i++)
+            {
+
+                for (int j = i + 1; j < shapes.Count; j++)
                 {
-                    if (shape != shapes[i])
-                        shape.CollidesWith(shapes[i]);
+                    Shape a = shapes[i];
+                    Shape b = shapes[j];
+
+                    CollisionInfo collision;
+
+                    if (CollisionDetector.SATCollision(a, b, out collision))
+                    {
+                        CollisionDetector.ResolveCollision(a, b, collision);
+
+                    }
                 }
             }
+
+            // Redraw
             Invalidate();
         }
 
@@ -65,10 +88,10 @@ namespace WindowsGUI
         private void AddShape(int x, int y)
         {
             Random random = new Random();
-            //int shapeType = random.Next(0, 2);
-            int shapeType = 1;
-            int height = random.Next(20, 100);
-            int width = random.Next(20, 100);
+            int shapeType = random.Next(1, 3);
+            //int shapeType = 1;
+            int height = random.Next(30, 100);
+            int width = random.Next(30, 100);
 
             switch (shapeType)
             {
@@ -76,6 +99,8 @@ namespace WindowsGUI
                     shapes.Add(new Circle(x, y, width)); break;
                 case 1:
                     shapes.Add(new Rectangle(x, y, height, width)); break;
+                case 2:
+                    shapes.Add(new Polygon(x, y)); break;
             }
         }
     }

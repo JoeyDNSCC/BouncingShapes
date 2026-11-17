@@ -15,6 +15,25 @@ namespace WindowsGUI
 
             radius = r;
 
+            /*
+            accuracy = 16; // num sides of hitbox
+            for (int i = 0; i < accuracy; i++)
+            {
+                float angle = rotation + (2 * MathF.PI * i / accuracy);
+
+                accuracy[i] = new PointF(
+                    radius * MathF.Cos(angle),
+                    radius * MathF.Sin(angle)
+                );
+            }
+            */
+            mass = (float)Math.PI * radius * radius;
+
+            momentOfInertia =
+                0.5f * mass * radius * radius;
+
+
+
         }
 
         public override void Draw(Graphics g)
@@ -26,26 +45,26 @@ namespace WindowsGUI
 
         public override void DetectEdge(int windowWidth, int windowHeight)
         {
-            if (xAnchor - radius <= 0)
+            if (xAnchor - radius < 0)
             {
-                xAnchor = radius + 1;
-                xVelocity *= -1;
+                xAnchor = radius;
+                xVelocity = Math.Abs(xVelocity);
             }
-            else if (xAnchor + radius >= windowWidth)
+            else if (xAnchor + radius > windowWidth)
             {
-                xAnchor = windowWidth - radius - 1;
-                xVelocity *= -1;
+                xAnchor = windowWidth - radius;
+                xVelocity = -Math.Abs(xVelocity);
             }
-            
-            if (yAnchor - radius <= 0)
+
+            if (yAnchor - radius < 0)
             {
-                yAnchor = radius + 1;
-                yVelocity *= -1;
+                yAnchor = radius;
+                yVelocity = Math.Abs(yVelocity);
             }
-            else if (yAnchor + radius >= windowHeight)
+            else if (yAnchor + radius > windowHeight)
             {
-                yAnchor = windowHeight - radius - 1;
-                yVelocity *= -1;
+                yAnchor = windowHeight - radius;
+                yVelocity = -Math.Abs(yVelocity);
             }
         }
 
@@ -113,14 +132,10 @@ namespace WindowsGUI
             throw new NotImplementedException();
         }
 
-        public override bool CollidesWithTriangle(Shape other)
-        {
-            throw new NotImplementedException();
-        }
 
 		public override PointF[] GetVertices()
 		{
-			throw new NotImplementedException();
+            throw new NotImplementedException();
 		}
 	}
 }
