@@ -101,6 +101,8 @@ namespace WindowsGUI
                     shapes.Add(new Rectangle(x, y, height, width)); break;
                 case 2:
                     shapes.Add(new Polygon(x, y)); break;
+                case 3:
+                    shapes.Add(new Cube(x, y, width)); break;
             }
         }
     }
