@@ -18,10 +18,7 @@ namespace WindowsGUI
 
             // we'll say density is universally set to 1 for all shapes
             mass = width * height;
-
-            //testing
-            //mass = 1;
-
+            // M(w^2 + h^2)/12
             momentOfInertia = mass * (width * width + height * height) / 12f;
         }
 

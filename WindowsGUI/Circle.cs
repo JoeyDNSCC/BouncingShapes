@@ -7,26 +7,27 @@ namespace WindowsGUI
     public class Circle : Shape
     {
         private float radius;
-
+        private PointF[] hitbox;
         public Circle(float x, float y, float r) : base(x, y)
         {
             xAnchor = x;
             yAnchor = y;
 
             radius = r;
+            
+            int accuracy = 16; // num sides of hitbox
+            hitbox = new PointF[accuracy];
 
-            /*
-            accuracy = 16; // num sides of hitbox
             for (int i = 0; i < accuracy; i++)
             {
                 float angle = rotation + (2 * MathF.PI * i / accuracy);
 
-                accuracy[i] = new PointF(
+                hitbox[i] = new PointF(
                     radius * MathF.Cos(angle),
                     radius * MathF.Sin(angle)
                 );
             }
-            */
+            
             mass = (float)Math.PI * radius * radius;
 
             momentOfInertia =
@@ -133,9 +134,27 @@ namespace WindowsGUI
         }
 
 
-		public override PointF[] GetVertices()
-		{
-            throw new NotImplementedException();
-		}
-	}
+        public override PointF[] GetVertices()
+        {
+            PointF[] translated = new PointF[hitbox.Length];
+
+            float radians = rotation * (float)Math.PI / 180f;
+
+            float cos = (float)Math.Cos(radians);
+            float sin = (float)Math.Sin(radians);
+
+            for (int i = 0; i < hitbox.Length; i++)
+            {
+                float rotatedX = hitbox[i].X * cos - hitbox[i].Y * sin;
+                float rotatedY = hitbox[i].X * sin + hitbox[i].Y * cos;
+
+                translated[i] = new PointF(
+                    rotatedX + xAnchor,
+                    rotatedY + yAnchor
+                );
+            }
+
+            return translated;
+        }
+    }
 }

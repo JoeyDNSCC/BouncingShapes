@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing.Drawing2D;
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
@@ -12,18 +13,24 @@ namespace WindowsGUI
     {
         public float size;
         public System.Drawing.Rectangle pictureBox;
-        private Image picture = Image.FromFile("Resources/hammer-and-sickle.png");
-        public Cube(float s, float x, float y) : base(x, y) {
+        private Image picture = Image.FromFile("D:\\NSCC\\semester3\\advprog\\assignments\\WindowsGUI\\WindowsGUI\\Resources\\black-mage.png");
+        public Cube(float x, float y, float s) : base(x, y) {
             size = s;
             mass = size * size; // no density
             // M(a^2)/2 where a = length of side
             momentOfInertia = mass * mass / 6f;
-
         }
 
         public override void Draw(Graphics g)
         {
-            g.DrawImage(picture, xAnchor - (size / 2f), yAnchor - (size / 2f), size, size);
+            GraphicsState state = g.Save();
+
+            g.TranslateTransform(xAnchor, yAnchor);
+            g.RotateTransform(rotation);
+
+            g.DrawImage(picture, -size / 2f, -size / 2f, (int)size, (int)size);
+
+            g.Restore(state);
         }
 
         public override void DetectEdge(int windowWidth, int windowHeight)
@@ -34,8 +41,8 @@ namespace WindowsGUI
             float sin = (float)Math.Abs(Math.Sin(rotation * Math.PI / 180f));
             float boundX = (size / 2f) * cos + (size / 2f) * sin;
             float boundY = (size / 2f) * sin + (size / 2f) * cos;
-            Debug.WriteLine("BoundX: " + boundX);
-            Debug.WriteLine("BoundY: " + boundY);
+            //Debug.WriteLine("BoundX: " + boundX);
+            //Debug.WriteLine("BoundY: " + boundY);
 
             if (xAnchor - boundX < 0) // left
             {

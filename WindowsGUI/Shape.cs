@@ -50,8 +50,8 @@ namespace WindowsGUI
 
         public abstract void DetectEdge(int windowWidth, int windowHeight);
 
-        // "float dispatching"
-        // CollidesWith() has the "other" call the correct collision method
+        // "double dispatching"
+        // none of these functions are in use, code is pending deletion once it is confirmed they will never be needed
         public abstract bool CollidesWith(Shape other);
 
         public abstract bool CollidesWithCircle(Circle other);

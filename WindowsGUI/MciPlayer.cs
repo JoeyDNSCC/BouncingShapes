@@ -63,7 +63,7 @@ namespace WindowsGUI
             _alias = alias;
             StopPlaying();
             CloseMediaFile();
-            string Pcommand = "open \"" + filename + "\" alias " + alias;
+            string Pcommand = $"open \"{filename}\" type mpegvideo alias {alias}";
             int ret = mciSendString(Pcommand, null, 0, IntPtr.Zero);
             _isloaded = (ret == 0) ? true : false;
             if (_isloaded)

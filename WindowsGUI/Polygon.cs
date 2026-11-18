@@ -8,14 +8,13 @@ namespace WindowsGUI
     public class Polygon : Shape
     {
         private PointF[] vertices;
-
-        public Polygon(float x, float y) : base(x, y)
+        public Polygon(float x, float y, float r) : base(x, y)
         {
             Random random = Random.Shared;
 
             // make normal polygon with random sides and "radius"
-            int numSides = random.Next(3, 13); 
-            float radius = random.Next(25, 100);
+            int numSides = random.Next(4, 11); 
+            float radius = r;
 
             // Random spawn rotation for funsies
             float rotation = (float)(random.NextDouble() * Math.PI * 2);

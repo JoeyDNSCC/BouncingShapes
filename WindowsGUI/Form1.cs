@@ -1,4 +1,5 @@
 using NAudio.Wave;
+using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using WindowsGUI;
@@ -88,7 +89,7 @@ namespace WindowsGUI
         private void AddShape(int x, int y)
         {
             Random random = new Random();
-            int shapeType = random.Next(1, 3);
+            int shapeType = random.Next(0, 4);
             //int shapeType = 1;
             int height = random.Next(30, 100);
             int width = random.Next(30, 100);
@@ -96,14 +97,15 @@ namespace WindowsGUI
             switch (shapeType)
             {
                 case 0:
-                    shapes.Add(new Circle(x, y, width)); break;
+                    shapes.Add(new Circle(x, y, height / 2)); break;
                 case 1:
                     shapes.Add(new Rectangle(x, y, height, width)); break;
                 case 2:
-                    shapes.Add(new Polygon(x, y)); break;
+                    shapes.Add(new Polygon(x, y, height / 2)); break;
                 case 3:
-                    shapes.Add(new Cube(x, y, width)); break;
+                    shapes.Add(new Cube(x, y, height)); break;
             }
+            Debug.WriteLine("A new shape has entered the chat!");
         }
     }
 }

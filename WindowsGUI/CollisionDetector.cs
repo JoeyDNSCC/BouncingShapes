@@ -13,8 +13,12 @@ namespace WindowsGUI
     public static class CollisionDetector
     {
         static Random random = new Random();
-        static MciPlayer click = new MciPlayer("Resources/click.mp3", "1");
-        static MciPlayer wow = new MciPlayer("Resources/wow.mp3", "2");
+        static string clickPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory,"Resources","click.mp3");
+        // WindowsGUI\bin\Debug\net10.0-windows\Resources\click.mp3
+        // D:\NSCC\semester3\advprog\assignments\WindowsGUI\WindowsGUI\Resources\click.mp3
+        static string wowPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", "wow.mp3");
+        static MciPlayer click = new MciPlayer("D:\\NSCC\\semester3\\advprog\\assignments\\WindowsGUI\\WindowsGUI\\Resources\\click.mp3", "click");
+        static MciPlayer wow = new MciPlayer("D:\\NSCC\\semester3\\advprog\\assignments\\WindowsGUI\\WindowsGUI\\Resources\\wow.mp3", "woww");
 
         #region Collision Detection
 
@@ -252,7 +256,7 @@ namespace WindowsGUI
                 relativeVelocity.X * collision.Normal.X +
                 relativeVelocity.Y * collision.Normal.Y;
 
-            float restitution = 1.1f; // <--- Bounciness multiplier
+            float restitution = 1.0f; // <--- Bounciness multiplier
 
             float raCrossN = Cross(ra, collision.Normal);
             float rbCrossN = Cross(rb, collision.Normal);
@@ -271,6 +275,7 @@ namespace WindowsGUI
 
             if (denominator <= 0) return;
 
+            // impulse force
             float j = -(1 + restitution) * velocityAlongNormal / denominator;
 
             // collision impulse vector
@@ -318,7 +323,7 @@ namespace WindowsGUI
                 Multiply(correction, inverseMassB)
             );
 
-            // all this just to determine who changes color
+
             float impactA = a.Mass * Math.Abs(
                 velocityA.X * collision.Normal.X +
                 velocityA.Y * collision.Normal.Y
@@ -328,7 +333,7 @@ namespace WindowsGUI
                 velocityB.X * collision.Normal.X +
                 velocityB.Y * collision.Normal.Y
             );
-            Debug.WriteLine("ImpactA: " + impactA + "\tImpactB: " + impactB);
+            //Debug.WriteLine("ImpactA: " + impactA + "\tImpactB: " + impactB);
 
             int whichColor = random.Next(1, 4);
 
@@ -363,14 +368,22 @@ namespace WindowsGUI
                 }
             }
 
-            if (impactA >= 500000 || impactB >= 500000)
-            {
-                wow.PlayFromStart();
-            } else
-            {
-                click.PlayFromStart();
-            }
             
+            if (velocityAlongNormal > 0.0f)
+            {
+                if (Math.Abs(j) >= 100000)
+                {
+                    wow.PlayFromStart();
+                    Debug.WriteLine("wowww");
+
+                }
+                else
+                {
+                    //click.PlayFromStart();
+                    //Debug.WriteLine("else reached");
+                }
+            }
+
         }
         
     }
